@@ -89,13 +89,21 @@ const LoginScreen = (props) => {
   };
 
   const handleSignInWithFacebook = async () => {
-    await signInWithFacebook();
-    setFirebaseStateChange(true);
+    try {
+      await signInWithFacebook();
+      setFirebaseStateChange(true);
+    } catch (error) {
+      console.log(error)
+    }
   }
 
   const handleSignInWithGoogle = async () => {
-    await signInWithGoogle();
-    setFirebaseStateChange(true);
+    try {
+      await signInWithGoogle();
+      setFirebaseStateChange(true);
+    } catch (error) {
+      console.log(error)
+    }
   }
 
   const submitHandler = (e) => {
