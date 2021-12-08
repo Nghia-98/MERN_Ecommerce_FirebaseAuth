@@ -1,0 +1,125 @@
+main {
+  min-height: 80vh;
+}
+
+h1 {
+  font-size: 1.8rem;
+  padding: 1rem 0;
+}
+
+h2 {
+  font-size: 1.4rem;
+  padding: 0.5rem 0;
+}
+
+h3 {
+  padding: 1rem 0;
+}
+
+.rating span {
+  margin: 0.1rem;
+}
+
+.cursor-disabled {
+  cursor: not-allowed;
+}
+
+.order-center {
+  text-align: center !important;
+}
+
+/* ---------------- carousel ------------------ */
+.carousel-item-next,
+.carousel-item-prev,
+.carousel-item.active {
+  display: flex;
+}
+.carousel-caption {
+  position: absolute;
+  top: 0;
+}
+
+.carousel-caption h2 {
+  color: #fff;
+}
+
+.carousel img {
+  height: 300px;
+  padding: 30px;
+  margin: 40px;
+  border-radius: 50%;
+  margin-left: auto;
+  margin-right: auto;
+}
+.carousel a {
+  margin: 0 auto;
+}
+@media (max-width: 900px) {
+  .carousel-caption h2 {
+    font-size: 2.5vw;
+  }
+}
+
+/* --------------- Pagination --------------- */
+.pagination {
+  margin-top: 2rem;
+  flex-wrap: wrap;
+  justify-content: center;
+}
+
+/* ----------- Login Screen --------------*/
+.btn__social {
+  display: block;
+  border-radius: 4px !important;
+  border: none !important;
+  font-size: 0.765625rem;
+  text-transform: uppercase;
+  height: 45px !important;
+  letter-spacing: 1px;
+}
+.btn__facebook {
+  color: white;
+  background: #2d91ff;
+  width: 100%;
+  margin-bottom: 0.5rem;
+}
+.btn__google {
+  background: #ededed;
+  color: rgb(90 90 90) !important;
+  width: 100%;
+}
+/* --------------- CheckoutSteps --------------------*/
+
+.checkout-nav .nav-item {
+  position: relative;
+  margin: 0;
+}
+
+.checkout-nav .step-disabled span {
+  background-color: #919aa1 !important;
+}
+
+.checkout-nav .text-underLine::after {
+  position: absolute;
+  top: 80%;
+  left: 15%;
+  content: '';
+  width: 70%;
+  height: 5px;
+  border-bottom: 2px #4bbf73 solid;
+}
+
+.checkout-nav .checkout-step span {
+  display: inline-block;
+  width: 21px;
+  text-align: center;
+  height: 20px;
+  background-color: #6a6969;
+  color: white;
+  border-radius: 50% !important;
+}
+
+.btn-verify-email {
+  padding: 6px 12px !important;
+  font-size: 11px !important;
+}
