@@ -15,8 +15,7 @@ const userSchema = mongoose.Schema(
     name: { type: String, required: true },
     password: String,
 
-    facebookId: String,
-    googleId: String,
+    socialAccountType: String,
 
     isAdmin: {
       type: Boolean,
