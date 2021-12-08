@@ -185,7 +185,7 @@ const LoginScreen = (props) => {
       <Row>
         <Col>
           <FacebookLogin
-            appId='231911432117995'
+            appId='4541659359285341'
             cssClass='btn__social btn__facebook'
             textButton='Login With Facebook'
             fields='name,email,picture'
