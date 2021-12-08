@@ -192,10 +192,10 @@ const ProfileScreen = ({ history, location }) => {
           loadingGetEmail ||
           loadingVerify) && <Loader />}
 
-        {_userDetails && _userDetails.facebookId && (
+        {_userDetails && _userDetails.socialAccountType === "facebook" && (
           <Message>Login with Facebook account !</Message>
         )}
-        {_userDetails && _userDetails.googleId && (
+        {_userDetails && _userDetails.socialAccountType === "google" && (
           <Message>Login with Google account !</Message>
         )}
         <Form onSubmit={submitHandler}>
@@ -241,7 +241,7 @@ const ProfileScreen = ({ history, location }) => {
             ></Form.Control>
           </Form.Group>
 
-          {_userDetails && !_userDetails.facebookId && !_userDetails.googleId && (
+          {_userDetails && !_userDetails.socialAccountType && (
             <>
               <Form.Group controlId='password'>
                 <Form.Label>Password</Form.Label>

@@ -16,8 +16,7 @@ const authToken = async (req, res) => {
     name: req.user.name,
     email: req.user.email,
     isAdmin: req.user.isAdmin,
-    facebookId: req.user.facebookId,
-    googleId: req.user.googleId,
+    socialAccountType: req.user.socialAccountType,
     isVerifiedEmail: req.user.isVerifiedEmail,
     token,
   };
@@ -53,8 +52,7 @@ const userRegister = async (req, res) => {
         name: user.name,
         email: user.email,
         isAdmin: user.isAdmin,
-        facebookId: user.facebookId,
-        googleId: user.googleId,
+        socialAccountType: user.socialAccountType,
         token: generateToken(user._id),
       });
   } else {
@@ -77,8 +75,7 @@ const userLogin = async (req, res) => {
       name: user.name,
       email: user.email,
       isAdmin: user.isAdmin,
-      facebookId: user.facebookId,
-      googleId: user.googleId,
+      socialAccountType: user.socialAccountType,
       token: generateToken(user._id),
     };
     return res.status(200).json(userInfo);
@@ -104,18 +101,18 @@ const userLoginSocial = async (req, res) => {
       res.status(401);
       throw new Error('Not authorized, token failed !');
     } else {
-      const { email, username, facebookId, googleId } = decoded;
+      const { email, username, socialAccountType } = decoded;
 
       const userExists = await User.findOne({ email });
       console.log('userExists', userExists);
 
       // User login by facebook account
-      if (facebookId) {
+      if (socialAccountType === 'facebook') {
         if (!userExists) {
           const createdUser = await User.create({
             name: username,
             email,
-            facebookId,
+            socialAccountType,
           });
 
           if (createdUser) {
@@ -126,8 +123,7 @@ const userLoginSocial = async (req, res) => {
               name: createdUser.name,
               email: createdUser.email,
               isAdmin: createdUser.isAdmin,
-              facebookId: createdUser.facebookId,
-              googleId: createdUser.googleId,
+              socialAccountType: createdUser.socialAccountType,
               token,
             });
           } else {
@@ -135,7 +131,7 @@ const userLoginSocial = async (req, res) => {
             throw new Error('Invalid user data !');
           }
         } else {
-          if (userExists.facebookId) {
+          if (userExists.socialAccountType === 'facebook') {
             const token = generateToken(userExists._id);
 
             return res.status(200).json({
@@ -143,8 +139,7 @@ const userLoginSocial = async (req, res) => {
               name: userExists.name,
               email: userExists.email,
               isAdmin: userExists.isAdmin,
-              facebookId: userExists.facebookId,
-              googleId: userExists.googleId,
+              socialAccountType: userExists.socialAccountType,
               token,
             });
           }
@@ -152,7 +147,7 @@ const userLoginSocial = async (req, res) => {
           // User login by Facebook
           // && email has been registered by an account
           // && account dont have facebookId
-          if (userExists.googleId) {
+          if (userExists.socialAccountType === "google") {
             res.status(400);
             throw new Error(
               `Email "${email}" has been registered at PROSHOP with Google account !`
@@ -167,12 +162,12 @@ const userLoginSocial = async (req, res) => {
       }
 
       // User login by Google account
-      if (googleId) {
+      if (socialAccountType === "google") {
         if (!userExists) {
           const createdUser = await User.create({
             name: username,
             email,
-            googleId,
+            socialAccountType,
           });
 
           if (createdUser) {
@@ -183,8 +178,7 @@ const userLoginSocial = async (req, res) => {
               name: createdUser.name,
               email: createdUser.email,
               isAdmin: createdUser.isAdmin,
-              facebookId: createdUser.facebookId,
-              googleId: createdUser.googleId,
+              socialAccountType: createdUser.socialAccountType,
               token,
             });
           } else {
@@ -192,7 +186,7 @@ const userLoginSocial = async (req, res) => {
             throw new Error('Invalid user data !');
           }
         } else {
-          if (userExists.googleId) {
+          if (userExists.socialAccountType === "google") {
             const token = generateToken(userExists._id);
 
             return res.status(200).json({
@@ -200,8 +194,7 @@ const userLoginSocial = async (req, res) => {
               name: userExists.name,
               email: userExists.email,
               isAdmin: userExists.isAdmin,
-              facebookId: userExists.googleId,
-              googleId: userExists.googleId,
+              socialAccountType: userExists.socialAccountType,
               token,
             });
           }
@@ -209,7 +202,7 @@ const userLoginSocial = async (req, res) => {
           // User login by Google
           // && email has been registered by an account
           // && account dont have googleId
-          if (userExists.facebookId) {
+          if (userExists.socialAccountType === 'facebook') {
             res.status(400);
             throw new Error(
               `Email "${email}" has been registered at PROSHOP with Facebook account !`
@@ -243,8 +236,7 @@ const getUserProfile = async (req, res) => {
       name: user.name,
       email: user.email,
       isAdmin: user.isAdmin,
-      facebookId: user.facebookId,
-      googleId: user.googleId,
+      socialAccountType: user.socialAccountType,
       isVerifiedEmail: user.isVerifiedEmail,
     });
   } else {
@@ -272,8 +264,7 @@ const updateUserProfile = async (req, res) => {
       name: updatedUser.name,
       email: updatedUser.email,
       isAdmin: updatedUser.isAdmin,
-      facebookId: updatedUser.facebookId,
-      googleId: updatedUser.googleId,
+      socialAccountType: updatedUser.socialAccountType,
       isVerifiedEmail: updatedUser.isVerifiedEmail,
       token,
     });
@@ -415,8 +406,7 @@ const verifyEmailByToken = async (req, res) => {
       name: updatedUser.name,
       email: updatedUser.email,
       isAdmin: updatedUser.isAdmin,
-      facebookId: updateUser.facebookId,
-      googleId: updateUser.googleId,
+      socialAccountType: updateUser.socialAccountType,
       isVerifiedEmail: updateUser.isVerifiedEmail,
     };
 

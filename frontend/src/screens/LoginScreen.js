@@ -3,13 +3,12 @@ import { useState, useEffect } from 'react';
 import { Form, Button, Row, Col } from 'react-bootstrap';
 import { useDispatch, useSelector } from 'react-redux';
 import { Link } from 'react-router-dom';
-import FacebookLogin from 'react-facebook-login';
-import GoogleLogin from 'react-google-login';
 import Loader from '../components/Loader';
 import Message from '../components/Message';
 import { login } from '../actions/userActions';
 import FormContainer from '../components/FormContainer';
 import { verifyEmail } from '../actions/verifyEmailActions';
+import { signInWithGoogle, signInWithFacebook, auth } from '../firebaseConfig';
 
 const LoginScreen = (props) => {
   const { history, location } = props;
@@ -17,23 +16,12 @@ const LoginScreen = (props) => {
 
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+  const [isFirebaseStateChange, setFirebaseStateChange] = useState(false);
 
   const userLogin = useSelector((state) => state.userLogin);
   const { loading, error, userInfo } = userLogin;
 
-  //#region
-  // const emailVerification = useSelector((state) => state.emailVerification);
-  // const {
-  //   loading: loadingVerify,
-  //   success: successVerify,
-  //   error: errorVerify,
-  //   message: messageVerify,
-  //   verifiedUser,
-  // } = emailVerification;
-  //#endregion
 
-  // const redirect = location.search ? location.search.split('=')[1] : '/';
-  // or
   const searchString = location.search; // the string part of URL, after character '?'
   const searchParams = new URLSearchParams(searchString);
 
@@ -46,21 +34,21 @@ const LoginScreen = (props) => {
     : '';
 
   useEffect(() => {
-    //#region
-    /* initial value of successVerify is false
-    if (successVerify) {
-      toast.success(`${messageVerify}`);
-      history.push('/profile');
-      return;
-    }
+    const unsubscribe = auth.onAuthStateChanged(user => {
+      if (user && isFirebaseStateChange) {
+        console.log('firebase', user)
+        handleLoginSocial(user.providerData[0]);
+      }
+    })
 
-    if (errorVerify) {
-      toast.error(`${errorVerify}`);
-      history.push('/profile');
-      return;
-    } */
-    //#endregion
+    return () => {
+      unsubscribe();
+      console.log('unsubcribe')
+    };
+    // eslint-disable-next-line
+  }, [isFirebaseStateChange])
 
+  useEffect(() => {
     //login successfully
     if (userInfo) {
       if (verifyEmailToken) {
@@ -77,50 +65,15 @@ const LoginScreen = (props) => {
     };
   }, [dispatch, history, userInfo, redirect, verifyEmailToken]);
 
-  const responseFacebook = (dataResponse) => {
-    console.log('Facebook-callback-data', dataResponse);
-
-    const data = {
-      email: dataResponse.email,
-      username: dataResponse.name,
-      facebookId: dataResponse.userID,
-    };
-
-    if (data.email) {
-      console.log('handleLoginSocial has called!');
-      handleLoginSocial(data);
-    } else {
-      dispatch({
-        type: 'USER_LOGIN_FAIL',
-        payload: 'Cannot access to your Facebook email !',
-      });
-    }
-  };
-
-  const responseGoogle = (dataResponse) => {
-    console.log('Google-callback-data', dataResponse);
-    const data = {
-      email: dataResponse.profileObj.email,
-      username: dataResponse.profileObj.name,
-      googleId: dataResponse.profileObj.googleId,
-    };
-
-    if (data.email) {
-      console.log('handleLoginSocial has called!');
-      handleLoginSocial(data);
-    } else {
-      dispatch({
-        type: 'USER_LOGIN_FAIL',
-        payload: 'Cannot access to your Google email !',
-      });
-    }
-  };
-
-  const handleLoginSocial = async (_data) => {
-    console.log('Body token login', _data);
+  const handleLoginSocial = async (data) => {
+    console.log('Body token login', data);
     try {
       const token = await jwt.sign(
-        _data,
+        {
+          username: data.displayName,
+          email: data.email,
+          socialAccountType: data.providerId === "google.com" ? "google" : "facebook"
+        },
         process.env.REACT_APP_JWT_SECRET || process.env.JWT_SECRET,
         {
           expiresIn: '30d',
@@ -134,6 +87,16 @@ const LoginScreen = (props) => {
       console.log(error);
     }
   };
+
+  const handleSignInWithFacebook = async () => {
+    await signInWithFacebook();
+    setFirebaseStateChange(true);
+  }
+
+  const handleSignInWithGoogle = async () => {
+    await signInWithGoogle();
+    setFirebaseStateChange(true);
+  }
 
   const submitHandler = (e) => {
     e.preventDefault();
@@ -184,32 +147,13 @@ const LoginScreen = (props) => {
 
       <Row>
         <Col>
-          <FacebookLogin
-            appId='4541659359285341'
-            cssClass='btn__social btn__facebook'
-            textButton='Login With Facebook'
-            fields='name,email,picture'
-            disableMobileRedirect={true}
-            callback={responseFacebook}
-          />
+          <Button style={{ width: "100%", background: "#DB4437", outline: "none" }} onClick={handleSignInWithGoogle}>Login With Google</Button>
         </Col>
       </Row>
 
       <Row>
         <Col>
-          <GoogleLogin
-            clientId='345201133892-pmeecrimpngn094rtio9jjisl8hon28r.apps.googleusercontent.com'
-            render={(renderProps) => (
-              <button
-                className='btn__social btn__google'
-                onClick={renderProps.onClick}
-              >
-                Login With Google
-              </button>
-            )}
-            onSuccess={responseGoogle}
-            onFailure={responseGoogle}
-          />
+          <Button style={{ marginTop: "1rem", width: "100%", background: "#4582f4", outline: "none" }} onClick={handleSignInWithFacebook}>Login With Facebook</Button>
         </Col>
       </Row>
 

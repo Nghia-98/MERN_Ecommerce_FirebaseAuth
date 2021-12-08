@@ -97,12 +97,12 @@ const UserEditScreen = (props) => {
           <Message variant='danger'>{error}</Message>
         ) : (
           <>
-            {_userDetails.facebookId && (
+            {_userDetails.socialAccountType === "facebook" && (
               <Form.Group>
                 <Message>Sign up with Facebook account !</Message>
               </Form.Group>
             )}
-            {_userDetails.googleId && (
+            {_userDetails.socialAccountType === "google" && (
               <Form.Group>
                 <Message>Sign up with Google account !</Message>
               </Form.Group>
